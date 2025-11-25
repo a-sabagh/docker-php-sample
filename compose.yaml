@@ -16,11 +16,13 @@ services:
         condition: service_healthy
     ports:
       - 9000:80
+    secrets:
+      - db-password
     environment:
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
+      - DB_PASS=/run/secrets/db-password
 
   db:
     image: mariadb:latest
@@ -29,9 +31,11 @@ services:
       - MARIADB_RANDOM_ROOT_PASSWORD=1
       - MARIADB_DATABASE=${DB_NAME}
       - MARIADB_USER=${DB_USER}
-      - MARIADB_PASSWORD=${DB_PASS}
+      - MARIADB_PASSWORD_FILE=/run/secrets/db-password
     volumes:
       - php-sample-db:/var/lib/mysql
+    secrets:
+      - db-password
     expose:
       - 3306
     healthcheck:
@@ -76,3 +80,7 @@ services:
 
 volumes:
   php-sample-db:
+
+secrets:
+  db-password:
+    file: secret/db_pass.txt
