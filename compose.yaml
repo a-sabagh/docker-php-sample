@@ -11,9 +11,36 @@ services:
   server:
     build:
       context: .
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - 9000:80
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
 
+  db:
+    image: mariadb:latest
+    restart: unless-stopped
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD=1
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASS}
+    volumes:
+      - php-sample-db:/var/lib/mysql
+    expose:
+      - 3306
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    container_name: php_sample_db_container
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the
@@ -47,3 +74,5 @@ services:
 #   db-password:
 #     file: db/password.txt
 
+volumes:
+  php-sample-db:
