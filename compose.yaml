@@ -45,6 +45,23 @@ services:
       timeout: 5s
       retries: 3
     container_name: php_sample_db_container
+  pma:
+    image: phpmyadmin
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=db #PMA_ARBITRARY=1
+#  adminer:
+#    image: adminer
+#    depends_on:
+#      - db
+#    restart: always
+#    ports:
+#      - 8080:8080
+
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the
