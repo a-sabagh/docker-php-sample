@@ -1,0 +1,55 @@
+services:
+  server:
+    build:
+      context: .
+      target: production
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 9000:80
+    secrets:
+      - db-password
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=/run/secrets/db-password
+    container_name: php_sample_server_prod
+  db:
+    image: mariadb:latest
+    restart: unless-stopped
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD=1
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD_FILE=/run/secrets/db-password
+    volumes:
+      - php-sample-db:/var/lib/mysql
+    secrets:
+      - db-password
+    expose:
+      - 3306
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    container_name: php_sample_db_prod
+  pma:
+    image: phpmyadmin
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=db #PMA_ARBITRARY=1
+    container_name: php_sample_pma_prod
+volumes:
+  php-sample-db:
+
+secrets:
+  db-password:
+    file: secret/db_pass.txt
