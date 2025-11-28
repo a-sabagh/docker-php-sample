@@ -23,7 +23,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=/run/secrets/db-password
-
+    container_name: php_sample_server
   db:
     image: mariadb:latest
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    container_name: php_sample_db_container
+    container_name: php_sample_db
   pma:
     image: phpmyadmin
     depends_on:
@@ -54,6 +54,7 @@ services:
       - 8080:80
     environment:
       - PMA_HOST=db #PMA_ARBITRARY=1
+    container_name: php_sample_pma
 #  adminer:
 #    image: adminer
 #    depends_on:
