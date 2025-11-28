@@ -29,6 +29,8 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY ./tests/ /var/www/html/tests
 
+COPY phpunit.xml /var/www/html/
+
 COPY --from=dev_deps /app/vendor/ /var/www/html/vendor
 
 FROM base AS production

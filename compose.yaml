@@ -11,8 +11,8 @@ services:
   server:
     build:
       context: .
-      # target: development
-      target: production
+      target: development
+      # target: production
     depends_on:
       db:
         condition: service_healthy
