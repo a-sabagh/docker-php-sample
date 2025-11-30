@@ -3,6 +3,7 @@ services:
     build:
       context: .
       target: development
+    working_dir: /var/www/html
     depends_on:
       db:
         condition: service_healthy

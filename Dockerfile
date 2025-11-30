@@ -33,6 +33,16 @@ COPY phpunit.xml /var/www/html/
 
 COPY --from=dev_deps /app/vendor/ /var/www/html/vendor
 
+# RUN ln -s /var/www/html/vendor/bin/phpunit /usr/local/bin/docker-sample-tests
+
+# RUN <<EOF cat >> /usr/local/bin/docker-sample-tests
+# #!/bin/bash
+# cd /var/www/html
+# ./vendor/bin/phpunit
+# EOF
+
+# RUN chmod +x /usr/local/bin/docker-sample-tests
+
 FROM base AS production
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
