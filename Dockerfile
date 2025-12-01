@@ -43,6 +43,12 @@ COPY --from=dev_deps /app/vendor/ /var/www/html/vendor
 
 # RUN chmod +x /usr/local/bin/docker-sample-tests
 
+FROM development AS tests
+
+WORKDIR /var/www/html
+
+RUN ./vendor/bin/phpunit
+
 FROM base AS production
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
